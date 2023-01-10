@@ -4,17 +4,26 @@ const MyButton = (props) => {
   return <button onClick={props.action}>{props.text}</button>;
 };
 
+const StatisticsLine = (props) => {
+  return (
+    <p>
+      {props.text}: {props.value}
+    </p>
+  );
+};
+
 const Statistics = ({ good, neutral, bad, all, average, positive }) => {
   if (all === 0) return <p>No feedback given</p>;
+  const percent = positive * 100 + '%';
   return (
     <>
       <h1>statistics</h1>
-      <p>Good: {good}</p>
-      <p>Neutral: {neutral}</p>
-      <p>Bad: {bad}</p>
-      <p>All: {all}</p>
-      <p>Average: {all !== 0 ? average : 0}</p>
-      <p>Positive: {all !== 0 ? positive : 0}</p>
+      <StatisticsLine text="Good" value={good} />
+      <StatisticsLine text="Neutral" value={neutral} />
+      <StatisticsLine text="Bad" value={bad} />
+      <StatisticsLine text="All" value={all} />
+      <StatisticsLine text="Average" value={average} />
+      <StatisticsLine text="Positive" value={percent} />
     </>
   );
 };
