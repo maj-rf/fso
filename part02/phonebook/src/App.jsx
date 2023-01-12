@@ -9,6 +9,8 @@ import {
   deleteContact,
   updateContact,
 } from './services/phonebook';
+import './index.css';
+import { Notification } from './Notification';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -16,6 +18,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [search, setSearch] = useState('');
   const [filtered, setFiltered] = useState([]);
+  const [notifMessage, setNotifMessage] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -44,6 +47,8 @@ const App = () => {
           number: newNumber,
         });
         setPersons(updatedContacts);
+        setNotifMessage('Successfully updated');
+        setTimeout(() => setNotifMessage(null), 3000);
         setNewName('');
         setNewNumber('');
       }
@@ -51,6 +56,8 @@ const App = () => {
     } else {
       const res = await saveContact(newPerson);
       setPersons(persons.concat(res));
+      setNotifMessage('Successfully saved');
+      setTimeout(() => setNotifMessage(null), 3000);
       setNewName('');
       setNewNumber('');
       return;
@@ -74,6 +81,8 @@ const App = () => {
       const res = await deleteContact(id);
       const filtered = persons.filter((person) => person.id !== id);
       setPersons(filtered);
+      setNotifMessage('Successfully deleted');
+      setTimeout(() => setNotifMessage(null), 3000);
     }
     return;
   };
@@ -81,6 +90,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={notifMessage} />
       <Filter handleChange={handleChange} search={search} />
       <PersonForm
         handleSubmit={handleSubmit}
