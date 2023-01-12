@@ -2,8 +2,13 @@ import { useState } from 'react';
 import { PersonForm } from './PersonForm';
 import { Filter } from './Filter';
 import { Contacts } from './Contacts';
-import axios from 'axios';
 import { useEffect } from 'react';
+import {
+  getAllContacts,
+  saveContact,
+  deleteContact,
+  updateContact,
+} from './services/phonebook';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -13,24 +18,43 @@ const App = () => {
   const [filtered, setFiltered] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons').then((response) => {
-      setPersons(response.data);
-    });
+    (async () => {
+      const res = await getAllContacts();
+      setPersons(res);
+    })();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newPerson = {
       name: newName,
       number: newNumber,
-      id: Date.now().toString,
     };
     const checkName = (obj) => obj.name === newPerson.name;
-    if (persons.some(checkName))
-      return alert(`${newPerson.name} is already added`);
-    setPersons(persons.concat(newPerson));
-    setNewName('');
-    setNewNumber('');
+    if (persons.some(checkName)) {
+      if (confirm(`Do you want to update ${newPerson.name}'s number?`)) {
+        const existing = persons.find((x) => x.name === newPerson.name);
+        const updatedContacts = persons.map((person) => {
+          return person.id === existing.id
+            ? { ...person, number: newPerson.number }
+            : person;
+        });
+        const res = await updateContact(existing.id, {
+          ...existing,
+          number: newNumber,
+        });
+        setPersons(updatedContacts);
+        setNewName('');
+        setNewNumber('');
+      }
+      return;
+    } else {
+      const res = await saveContact(newPerson);
+      setPersons(persons.concat(res));
+      setNewName('');
+      setNewNumber('');
+      return;
+    }
   };
 
   const handleChange = (e) => {
@@ -45,6 +69,15 @@ const App = () => {
     if (e.target.classList.contains('number')) setNewNumber(e.target.value);
   };
 
+  const handleDelete = async (e, id, name) => {
+    if (confirm(`Delete ${name} as contact?`)) {
+      const res = await deleteContact(id);
+      const filtered = persons.filter((person) => person.id !== id);
+      setPersons(filtered);
+    }
+    return;
+  };
+
   return (
     <div>
       <h1>Phonebook</h1>
@@ -55,7 +88,12 @@ const App = () => {
         newName={newName}
         newNumber={newNumber}
       />
-      <Contacts persons={persons} search={search} filtered={filtered} />
+      <Contacts
+        persons={persons}
+        search={search}
+        filtered={filtered}
+        handleDelete={handleDelete}
+      />
     </div>
   );
 };

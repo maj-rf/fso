@@ -1,7 +1,10 @@
-export const Person = (props) => {
+export const Person = ({ person, handleDelete }) => {
   return (
     <div>
-      {props.person.name} <span> {props.person.number}</span>
+      {person.name} <span> {person.number}</span>{' '}
+      <button onClick={(e) => handleDelete(e, person.id, person.name)}>
+        Delete
+      </button>
     </div>
   );
 };
