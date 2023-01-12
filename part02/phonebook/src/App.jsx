@@ -18,7 +18,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [search, setSearch] = useState('');
   const [filtered, setFiltered] = useState([]);
-  const [notifMessage, setNotifMessage] = useState(null);
+  const [notifMessage, setNotifMessage] = useState({ text: null, type: '' });
 
   useEffect(() => {
     (async () => {
@@ -26,6 +26,11 @@ const App = () => {
       setPersons(res);
     })();
   }, []);
+
+  const showMessage = (message) => {
+    setNotifMessage(message);
+    setTimeout(() => setNotifMessage({ text: null, type: '' }), 3000);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,22 +47,25 @@ const App = () => {
             ? { ...person, number: newPerson.number }
             : person;
         });
-        const res = await updateContact(existing.id, {
-          ...existing,
-          number: newNumber,
-        });
-        setPersons(updatedContacts);
-        setNotifMessage('Successfully updated');
-        setTimeout(() => setNotifMessage(null), 3000);
-        setNewName('');
-        setNewNumber('');
+        try {
+          const res = await updateContact(existing.id, {
+            ...existing,
+            number: newNumber,
+          });
+          setPersons(updatedContacts);
+          showMessage({ text: 'Successfully Updated', type: 'success' });
+          setNewName('');
+          setNewNumber('');
+        } catch (error) {
+          showMessage({ text: 'Already Deleted', type: 'error' });
+          console.log(error);
+        }
       }
       return;
     } else {
       const res = await saveContact(newPerson);
       setPersons(persons.concat(res));
-      setNotifMessage('Successfully saved');
-      setTimeout(() => setNotifMessage(null), 3000);
+      showMessage({ text: 'Successfully Saved', type: 'success' });
       setNewName('');
       setNewNumber('');
       return;
@@ -81,8 +89,7 @@ const App = () => {
       const res = await deleteContact(id);
       const filtered = persons.filter((person) => person.id !== id);
       setPersons(filtered);
-      setNotifMessage('Successfully deleted');
-      setTimeout(() => setNotifMessage(null), 3000);
+      showMessage({ text: 'Successfully Deleted', type: 'success' });
     }
     return;
   };
