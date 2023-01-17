@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const logger = require('morgan');
 
 let people = [
   {
@@ -24,8 +25,11 @@ let people = [
   },
 ];
 
+logger.token('body', (req) => JSON.stringify(req.body));
 app.use(express.json());
-
+app.use(
+  logger(':method :url :status :res[content-length] - :response-time ms :body')
+);
 const generateId = () => {
   const id = Math.floor(Math.random() * 123456789);
   const checkIfIdExists = (obj) => obj.id === Number(id);
