@@ -5,49 +5,21 @@ const cors = require('cors');
 const Person = require('./models/Person');
 require('dotenv').config();
 
-let people = [
-  {
-    id: 1,
-    name: 'Arto Hellas',
-    number: '040-123456',
-  },
-  {
-    id: 2,
-    name: 'Ada Lovelace',
-    number: '39-44-5323523',
-  },
-  {
-    id: 3,
-    name: 'Dan Abramov',
-    number: '12-43-234345',
-  },
-  {
-    id: 4,
-    name: 'Mary Poppendieck',
-    number: '39-23-6423122',
-  },
-];
-
 app.use(cors());
-logger.token('body', (req) => JSON.stringify(req.body));
+app.use(express.static('dist'));
 app.use(express.json());
+logger.token('body', (req) => JSON.stringify(req.body));
 app.use(
   logger(':method :url :status :res[content-length] - :response-time ms :body')
 );
-app.use(express.static('dist'));
-
-const generateId = () => {
-  const id = Math.floor(Math.random() * 123456789);
-  const checkIfIdExists = (obj) => obj.id === Number(id);
-  return people.some(checkIfIdExists) ? generateId() : id;
-};
 
 app.get('/api/persons', async (request, response) => {
   const people = await Person.find({});
   response.json(people);
 });
 
-app.get('/api/info', (request, response) => {
+app.get('/api/info', async (request, response) => {
+  const people = await Person.find({});
   const date = new Date();
   const length = people.length;
   const div = `<div>
@@ -57,16 +29,38 @@ app.get('/api/info', (request, response) => {
   response.send(div);
 });
 
-app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id);
-  const person = people.find((person) => person.id === id);
-  return person ? response.json(person) : response.status(404).end();
+app.get('/api/persons/:id', async (request, response) => {
+  try {
+    const person = await Person.findById(request.params.id);
+    if (!person) return response.status(404).end();
+    response.json(person);
+  } catch (err) {
+    console.log(err);
+    response.status(500).end();
+  }
 });
 
-app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id);
-  people = people.filter((person) => person.id !== id);
-  response.status(204).end();
+app.delete('/api/persons/:id', async (request, response, next) => {
+  try {
+    await Person.findByIdAndRemove(request.params.id);
+    response.status(204).end();
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+});
+
+app.put('/api/persons/:id', async (request, response, next) => {
+  try {
+    await Person.findByIdAndUpdate(request.params.id, {
+      name: request.body.name,
+      number: request.body.number,
+    });
+    response.status(200).end();
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
 });
 
 app.post('/api/persons', async (request, response) => {
@@ -87,7 +81,6 @@ app.post('/api/persons', async (request, response) => {
   }
 
   const newPerson = new Person({
-    //id: generateId(),
     name: body.name,
     number: body.number,
   });
@@ -95,6 +88,21 @@ app.post('/api/persons', async (request, response) => {
   const createPerson = await newPerson.save();
   response.json(createPerson);
 });
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' });
+  }
+  next(error);
+};
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' });
+};
+
+app.use(unknownEndpoint);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
