@@ -52,10 +52,13 @@ app.delete('/api/persons/:id', async (request, response, next) => {
 
 app.put('/api/persons/:id', async (request, response, next) => {
   try {
-    await Person.findByIdAndUpdate(request.params.id, {
-      name: request.body.name,
-      number: request.body.number,
-    });
+    await Person.findByIdAndUpdate(
+      request.params.id,
+      {
+        number: request.body.number,
+      },
+      { new: true, runValidators: true, context: 'query' }
+    );
     response.status(200).end();
   } catch (err) {
     console.log(err);
@@ -63,36 +66,33 @@ app.put('/api/persons/:id', async (request, response, next) => {
   }
 });
 
-app.post('/api/persons', async (request, response) => {
+app.post('/api/persons', async (request, response, next) => {
   const body = request.body;
-  const checkIfNameExists = (obj) => obj.name === body.name;
-  const people = await Person.find({});
+  try {
+    if (!body.name || !body.number) {
+      return response
+        .status(400)
+        .json({ error: 'Missing input. Please fill all details' });
+    }
 
-  if (!body.name || !body.number) {
-    return response
-      .status(400)
-      .json({ error: 'Missing input. Please fill all details' });
+    const newPerson = new Person({
+      name: body.name,
+      number: body.number,
+    });
+
+    const createPerson = await newPerson.save();
+    response.json(createPerson);
+  } catch (err) {
+    next(err);
   }
-
-  if (people.some(checkIfNameExists)) {
-    return response
-      .status(400)
-      .json({ error: 'Name already exists. Must be unique.' });
-  }
-
-  const newPerson = new Person({
-    name: body.name,
-    number: body.number,
-  });
-
-  const createPerson = await newPerson.save();
-  response.json(createPerson);
 });
 
 const errorHandler = (error, request, response, next) => {
   console.error(error.message);
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' });
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message });
   }
   next(error);
 };
