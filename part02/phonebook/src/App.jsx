@@ -42,11 +42,13 @@ const App = () => {
     if (persons.some(checkName)) {
       if (confirm(`Do you want to update ${newPerson.name}'s number?`)) {
         const existing = persons.find((x) => x.name === newPerson.name);
+        console.log(existing);
         const updatedContacts = persons.map((person) => {
           return person.id === existing.id
             ? { ...person, number: newPerson.number }
             : person;
         });
+        console.log(updatedContacts);
         try {
           const res = await updateContact(existing.id, {
             ...existing,
@@ -56,19 +58,29 @@ const App = () => {
           showMessage({ text: 'Successfully Updated', type: 'success' });
           setNewName('');
           setNewNumber('');
-        } catch (error) {
-          showMessage({ text: 'Already Deleted', type: 'error' });
-          console.log(error);
+        } catch (err) {
+          console.log(err);
+          if (err.response.status === 400)
+            return showMessage({
+              text: err.response.data.error,
+              type: 'error',
+            });
+          return showMessage({ text: 'Already Deleted', type: 'error' });
         }
       }
       return;
     } else {
-      const res = await saveContact(newPerson);
-      setPersons(persons.concat(res));
-      showMessage({ text: 'Successfully Saved', type: 'success' });
-      setNewName('');
-      setNewNumber('');
-      return;
+      try {
+        const res = await saveContact(newPerson);
+        setPersons([...persons].concat(res));
+        showMessage({ text: 'Successfully Saved', type: 'success' });
+        setNewName('');
+        setNewNumber('');
+        return;
+      } catch (err) {
+        showMessage({ text: err.response.data.error, type: 'error' });
+        console.log(err);
+      }
     }
   };
 
