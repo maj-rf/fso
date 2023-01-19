@@ -32,6 +32,7 @@ app.use(express.json());
 app.use(
   logger(':method :url :status :res[content-length] - :response-time ms :body')
 );
+app.use(express.static('dist'));
 
 const generateId = () => {
   const id = Math.floor(Math.random() * 123456789);
