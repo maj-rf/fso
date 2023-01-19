@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const logger = require('morgan');
 const cors = require('cors');
+const Person = require('./models/Person');
+require('dotenv').config();
 
 let people = [
   {
@@ -40,7 +42,8 @@ const generateId = () => {
   return people.some(checkIfIdExists) ? generateId() : id;
 };
 
-app.get('/api/persons', (request, response) => {
+app.get('/api/persons', async (request, response) => {
+  const people = await Person.find({});
   response.json(people);
 });
 
@@ -66,10 +69,10 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end();
 });
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', async (request, response) => {
   const body = request.body;
-
   const checkIfNameExists = (obj) => obj.name === body.name;
+  const people = await Person.find({});
 
   if (!body.name || !body.number) {
     return response
@@ -83,14 +86,14 @@ app.post('/api/persons', (request, response) => {
       .json({ error: 'Name already exists. Must be unique.' });
   }
 
-  const person = {
-    id: generateId(),
+  const newPerson = new Person({
+    //id: generateId(),
     name: body.name,
     number: body.number,
-  };
+  });
 
-  people = people.concat(person);
-  response.json(person);
+  const createPerson = await newPerson.save();
+  response.json(createPerson);
 });
 
 const PORT = process.env.PORT || 3001;
