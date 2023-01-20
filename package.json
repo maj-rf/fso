@@ -3,7 +3,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "mongoose": "^6.8.4"
+    "mongoose": "^6.8.4",
+    "morgan": "^1.10.0"
   },
   "name": "fso-blog-server",
   "version": "1.0.0",
