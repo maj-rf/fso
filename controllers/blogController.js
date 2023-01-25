@@ -13,6 +13,10 @@ blogRouter.post('/', async (request, response) => {
     url: request.body.url,
     likes: request.body.likes || 0,
   });
+
+  if (!request.body.title || !request.body.author) {
+    return response.status(400).end();
+  }
   const result = await blog.save();
   response.status(201).json(result);
 });
