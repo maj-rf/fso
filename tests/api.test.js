@@ -75,6 +75,32 @@ describe('POST methods for blog', () => {
   });
 });
 
+describe('DELETE methods for blog', () => {
+  test('deleting a valid blog in db', async () => {
+    await api.delete(`/api/blogs/${helper.initialData[0]._id}`).expect(204);
+    const currentBlogs = await helper.blogsInDB();
+    expect(currentBlogs).toHaveLength(helper.initialData.length - 1);
+    const contents = currentBlogs.map((r) => r.id);
+    expect(contents).not.toContain(helper.initialData[0]._id);
+  });
+});
+
+describe('PUT methods for blog', () => {
+  test('updating a valid blog in db', async () => {
+    const update = {
+      title: 'Superfriends',
+      // author: 'Joey Tribbiani',
+      // url: 'https://friends.com/',
+    };
+    await api
+      .put(`/api/blogs/${helper.initialData[0]._id}`)
+      .send(update)
+      .expect(202);
+    const currentBlogs = await helper.blogsInDB();
+    const contents = currentBlogs.map((r) => r.title);
+    expect(contents).toContain('Superfriends');
+  });
+});
 afterAll(async () => {
   await mongoose.connection.close();
 });
