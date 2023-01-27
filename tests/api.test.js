@@ -4,11 +4,8 @@ const app = require('../app');
 const api = supertest(app);
 const helper = require('./test_helper');
 const Blog = require('../models/blog');
-
-// band aid solution for timeouts
-// beforeAll(async () => {
-//   await app.connectDB();
-// });
+const bcrypt = require('bcrypt');
+const User = require('../models/user');
 
 beforeEach(async () => {
   await Blog.deleteMany({});
@@ -89,8 +86,6 @@ describe('PUT methods for blog', () => {
   test('updating a valid blog in db', async () => {
     const update = {
       title: 'Superfriends',
-      // author: 'Joey Tribbiani',
-      // url: 'https://friends.com/',
     };
     await api
       .put(`/api/blogs/${helper.initialData[0]._id}`)
@@ -101,6 +96,47 @@ describe('PUT methods for blog', () => {
     expect(contents).toContain('Superfriends');
   });
 });
+
+describe('User tests', () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+    const passwordHash = await bcrypt.hash('sekret', 10);
+    const user = new User({ username: 'root', name: 'root', passwordHash });
+
+    await user.save();
+  });
+
+  test('create valid user', async () => {
+    const initialUsers = await helper.usersInDb();
+    const newUser = {
+      username: 'newUser',
+      name: 'newUser',
+      password: 'randompass',
+    };
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const currentUsers = await helper.usersInDb();
+    expect(currentUsers).toHaveLength(initialUsers.length + 1);
+
+    const usernames = currentUsers.map((u) => u.username);
+    expect(usernames).toContain(newUser.username);
+  });
+
+  test('invalid user with missing credentials', async () => {
+    const newUser = {
+      username: 'blue',
+    };
+
+    const response = await api.post('/api/users').send(newUser);
+    expect(response.statusCode).toBe(400);
+  });
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });
