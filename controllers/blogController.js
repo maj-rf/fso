@@ -3,13 +3,6 @@ const Blog = require('../models/blog');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
-const getTokenFrom = (request) => {
-  const auth = request.get('authorization');
-  if (auth && auth.startsWith('Bearer ')) {
-    return auth.replace('Bearer ', '');
-  }
-  return null;
-};
 blogRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 });
   response.json(blogs);
@@ -17,7 +10,7 @@ blogRouter.get('/', async (request, response) => {
 
 blogRouter.post('/', async (request, response) => {
   const { title, author, url, likes } = request.body;
-  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET);
+  const decodedToken = jwt.verify(request.token, process.env.SECRET);
   if (!decodedToken.id) {
     return response
       .status(401)
@@ -42,18 +35,45 @@ blogRouter.post('/', async (request, response) => {
 
 blogRouter.delete('/:id', async (request, response) => {
   const id = request.params.id;
+  const blog = await Blog.findById(id).populate('user');
+  const decodedToken = jwt.verify(request.token, process.env.SECRET);
+  if (!decodedToken.id) {
+    return response.status(401).json({
+      error: 'Unauthorized. Invalid token.',
+    });
+  }
+  if (blog.user._id.toString() !== decodedToken.id) {
+    return response.status(401).json({
+      error: 'Unauthorized. Blog User and Current User do not match',
+    });
+  }
   await Blog.findByIdAndDelete(id);
   response.status(204).end();
 });
 
 blogRouter.put('/:id', async (request, response) => {
   const id = request.params.id;
+  const { title, author, url, likes } = request.body;
+  const blog = await Blog.findById(id).populate('user');
+  const decodedToken = jwt.verify(request.token, process.env.SECRET);
+  if (!decodedToken.id) {
+    return response.status(401).json({
+      error: 'Unauthorized. Invalid token.',
+    });
+  }
+  if (blog.user._id.toString() !== decodedToken.id) {
+    return response.status(401).json({
+      error: 'Unauthorized. Blog User and Current User do not match',
+    });
+  }
+
   const update = {
-    title: request.body.title,
-    author: request.body.author,
-    url: request.body.url,
-    likes: request.body.likes || 0,
+    title,
+    author,
+    url,
+    likes: likes || 0,
   };
+
   await Blog.findByIdAndUpdate(id, update, {
     new: true,
     runValidators: true,
