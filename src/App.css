@@ -2,7 +2,6 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
 }
 
 .logo {
@@ -27,24 +26,30 @@
   }
 }
 
-.success {
+.notif {
   position: absolute;
   top: 0;
-  left: 0;
-  border: 2px solid black;
-  background-color: limegreen;
+  right: 0;
   padding: 1rem;
-  width: 100%;
+  width: 50vw;
+  max-width: 300px;
+  background-color: aliceblue;
+}
+.success {
+  border: 2px solid limegreen;
 }
 
 .error {
-  position: absolute;
-  top: 0;
-  left: 0;
-  border: 2px solid black;
-  background-color: tomato;
-  padding: 1rem;
-  width: 100%;
+  border: 2px solid tomato;
+}
+
+form > div {
+  display: grid;
+}
+
+.home {
+  display: grid;
+  place-items: center;
 }
 
 @media (prefers-reduced-motion: no-preference) {
