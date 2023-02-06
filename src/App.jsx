@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Blog } from './components/Blog';
-import { getAll, setToken } from './services/blogs';
+import { getAll, setToken, createBlog } from './services/blogs';
 import { login } from './services/auth';
 import './App.css';
 import { Login } from './components/Login';
 import { Notification } from './components/Notification';
+import { CreateBlog } from './components/CreateBlog';
 function App() {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
@@ -29,8 +30,9 @@ function App() {
     e.preventDefault();
     try {
       const user = await login({ username, password });
-      setUser(user);
       window.localStorage.setItem('blogUser', JSON.stringify(user));
+      setToken(user.token);
+      setUser(user);
       setUsername('');
       setPassword('');
       showMessage({ text: 'Logged In!', type: 'success' });
@@ -51,13 +53,31 @@ function App() {
     return;
   };
 
+  const handleCreateBlog = async (title, author, url) => {
+    const newBlog = {
+      title,
+      author,
+      url,
+    };
+    try {
+      const response = await createBlog(newBlog);
+      setBlogs(blogs.concat(response));
+      showMessage({
+        text: `Created new blog with title: ${newBlog.title}`,
+        type: 'success',
+      });
+    } catch (err) {
+      showMessage({ text: err.response.data.error, type: 'error' });
+    }
+  };
+
   const showMessage = (message) => {
     setNotifMessage(message);
     setTimeout(() => setNotifMessage({ text: null, type: '' }), 3000);
   };
 
   return (
-    <div>
+    <div className="home">
       <Notification message={notifMessage} />
       {user === null ? (
         <Login
@@ -72,6 +92,7 @@ function App() {
             hello, {user.username}
             <button onClick={handleLogout}>Logout</button>
           </p>
+          <CreateBlog handleCreateBlog={handleCreateBlog} />
           <h2>blogs</h2>
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />

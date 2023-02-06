@@ -3,5 +3,5 @@ export const Notification = ({ message }) => {
     return null;
   }
 
-  return <div className={message.type}>{message.text}</div>;
+  return <div className={'notif ' + message.type}>{message.text}</div>;
 };
