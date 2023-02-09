@@ -54,18 +54,18 @@ blogRouter.delete('/:id', async (request, response) => {
 blogRouter.put('/:id', async (request, response) => {
   const id = request.params.id;
   const { title, author, url, likes } = request.body;
-  const blog = await Blog.findById(id).populate('user');
+  //const blog = await Blog.findById(id).populate('user');
   const decodedToken = jwt.verify(request.token, process.env.SECRET);
   if (!decodedToken.id) {
     return response.status(401).json({
       error: 'Unauthorized. Invalid token.',
     });
   }
-  if (blog.user._id.toString() !== decodedToken.id) {
-    return response.status(401).json({
-      error: 'Unauthorized. Blog User and Current User do not match',
-    });
-  }
+  // if (blog.user._id.toString() !== decodedToken.id) {
+  //   return response.status(401).json({
+  //     error: 'Unauthorized. Blog User and Current User do not match',
+  //   });
+  // }
 
   const update = {
     title,
