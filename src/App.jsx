@@ -12,7 +12,8 @@ import './App.css';
 import { Login } from './components/Login';
 import { Notification } from './components/Notification';
 import { CreateBlog } from './components/CreateBlog';
-import { ToggleDiv } from './components/ToggleDiv';
+import ToggleDiv from './components/ToggleDiv';
+
 function App() {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
@@ -101,7 +102,6 @@ function App() {
       const newBlogs = blogs.map((obj) => {
         return obj.id === id ? { ...obj, likes: obj.likes + 1 } : obj;
       });
-      console.log(newBlogs);
       setBlogs(newBlogs);
       showMessage({
         text: 'Succesfully Liked',
