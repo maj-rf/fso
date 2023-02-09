@@ -1,5 +1,5 @@
-import { ToggleDiv } from './ToggleDiv';
-
+import ToggleDiv from './ToggleDiv';
+import PropTypes from 'prop-types';
 export const Blog = ({ blog, user, handleDeleteBlog, handleBlogLikes }) => {
   const { id, title, author, url, likes } = blog;
   const blogStyle = {
@@ -41,4 +41,11 @@ export const Blog = ({ blog, user, handleDeleteBlog, handleBlogLikes }) => {
       </ToggleDiv>
     </div>
   );
+};
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  handleDeleteBlog: PropTypes.func.isRequired,
+  handleBlogLikes: PropTypes.func.isRequired,
 };

@@ -1,7 +1,7 @@
 import { useState, forwardRef, useImperativeHandle } from 'react';
+import PropTypes from 'prop-types';
 
-// eslint-disable-next-line react/display-name
-export const ToggleDiv = forwardRef(function (props, refs) {
+const ToggleDiv = forwardRef(function (props, refs) {
   const [visible, setVisible] = useState(false);
 
   const hideWhenVisible = { display: visible ? 'none' : '' };
@@ -29,3 +29,17 @@ export const ToggleDiv = forwardRef(function (props, refs) {
     </div>
   );
 });
+
+ToggleDiv.displayName = 'ToggleDiv';
+ToggleDiv.propTypes = {
+  refs: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  ]),
+  props: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+    PropTypes.element,
+  ]),
+};
+export default ToggleDiv;
