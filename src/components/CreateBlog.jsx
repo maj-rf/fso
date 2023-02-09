@@ -48,7 +48,7 @@ export const CreateBlog = ({ handleCreateBlog }) => {
           value={url}
         />
       </div>
-      <button type="submit">Create</button>
+      <button type="submit">Submit</button>
     </form>
   );
 };

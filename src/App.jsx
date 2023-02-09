@@ -1,17 +1,26 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Blog } from './components/Blog';
-import { getAll, setToken, createBlog } from './services/blogs';
+import {
+  getAll,
+  setToken,
+  createBlog,
+  deleteBlog,
+  updateBlog,
+} from './services/blogs';
 import { login } from './services/auth';
 import './App.css';
 import { Login } from './components/Login';
 import { Notification } from './components/Notification';
 import { CreateBlog } from './components/CreateBlog';
+import { ToggleDiv } from './components/ToggleDiv';
 function App() {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [notifMessage, setNotifMessage] = useState({ text: null, type: '' });
+  const blogFormRef = useRef();
+  const sorted = blogs.sort((a, b) => b.likes - a.likes);
 
   useEffect(() => {
     getAll().then((blogs) => setBlogs(blogs));
@@ -54,6 +63,7 @@ function App() {
   };
 
   const handleCreateBlog = async (title, author, url) => {
+    blogFormRef.current.toggleVisibility();
     const newBlog = {
       title,
       author,
@@ -64,6 +74,37 @@ function App() {
       setBlogs(blogs.concat(response));
       showMessage({
         text: `Created new blog with title: ${newBlog.title}`,
+        type: 'success',
+      });
+    } catch (err) {
+      showMessage({ text: err.response.data.error, type: 'error' });
+    }
+  };
+
+  const handleDeleteBlog = async (id) => {
+    try {
+      await deleteBlog(id);
+      const newBlogs = blogs.filter((blog) => blog.id !== id);
+      setBlogs(newBlogs);
+      showMessage({
+        text: 'Succesfully deleted',
+        type: 'success',
+      });
+    } catch (err) {
+      showMessage({ text: err.response.data.error, type: 'error' });
+    }
+  };
+
+  const handleBlogLikes = async (id, newObj) => {
+    try {
+      await updateBlog(id, newObj);
+      const newBlogs = blogs.map((obj) => {
+        return obj.id === id ? { ...obj, likes: obj.likes + 1 } : obj;
+      });
+      console.log(newBlogs);
+      setBlogs(newBlogs);
+      showMessage({
+        text: 'Succesfully Liked',
         type: 'success',
       });
     } catch (err) {
@@ -92,10 +133,18 @@ function App() {
             hello, {user.username}
             <button onClick={handleLogout}>Logout</button>
           </p>
-          <CreateBlog handleCreateBlog={handleCreateBlog} />
+          <ToggleDiv label="Create Blog" ref={blogFormRef}>
+            <CreateBlog handleCreateBlog={handleCreateBlog} />
+          </ToggleDiv>
           <h2>blogs</h2>
-          {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+          {sorted?.map((blog) => (
+            <Blog
+              key={blog.id}
+              blog={blog}
+              user={user}
+              handleDeleteBlog={handleDeleteBlog}
+              handleBlogLikes={handleBlogLikes}
+            />
           ))}
         </div>
       )}
