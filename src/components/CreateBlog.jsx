@@ -29,6 +29,7 @@ export const CreateBlog = ({ handleCreateBlog }) => {
           id="title"
           type="text"
           value={title}
+          placeholder="Harry Potter"
         />
       </div>
       <div>
@@ -38,6 +39,7 @@ export const CreateBlog = ({ handleCreateBlog }) => {
           id="author"
           type="text"
           value={author}
+          placeholder="JK Rowling"
         />
       </div>
       <div>
@@ -47,6 +49,7 @@ export const CreateBlog = ({ handleCreateBlog }) => {
           id="url"
           type="text"
           value={url}
+          placeholder="hogwar.ts"
         />
       </div>
       <button type="submit">Submit</button>
