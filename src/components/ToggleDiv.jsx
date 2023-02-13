@@ -22,7 +22,7 @@ const ToggleDiv = forwardRef(function (props, refs) {
       <div style={hideWhenVisible}>
         <button onClick={toggleVisibility}>{props.label}</button>
       </div>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className="hidden-content">
         {props.children}
         <button onClick={toggleVisibility}>Close</button>
       </div>
