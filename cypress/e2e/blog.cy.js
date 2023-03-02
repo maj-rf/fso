@@ -6,7 +6,13 @@ describe('Blog App', () => {
       username: 'red',
       password: 'red',
     };
+    const anotherUser = {
+      name: 'green',
+      username: 'green',
+      password: 'green',
+    };
     cy.request('POST', 'http://localhost:3000/api/users/', user);
+    cy.request('POST', 'http://localhost:3000/api/users/', anotherUser);
     cy.visit('http://localhost:3000');
   });
 
@@ -68,7 +74,30 @@ describe('Blog App', () => {
       cy.get('#url').type('another url');
       cy.contains('Submit').click();
       cy.contains('View').click();
-      cy.contains('delete').click();
+      cy.contains('Delete').click();
+    });
+
+    it('logged user can log out and cannnot delete other user blogs', function () {
+      cy.contains('Logout').click();
+      cy.contains('Login');
+      cy.get('#username').type('green');
+      cy.get('#password').type('green');
+      cy.get('button').click();
+      cy.contains('hello, green');
+      cy.contains('View').click();
+      cy.get('button').contains('Delete').should('not.exist');
+    });
+
+    it('blogs are sorted by most to least likes', function () {
+      cy.contains('View').click();
+      cy.contains('like').click();
+      cy.contains('Create Blog').click();
+      cy.get('#title').type('least likes');
+      cy.get('#author').type('another author');
+      cy.get('#url').type('another url');
+      cy.contains('Submit').click();
+      cy.get('.blog-wrap').eq(0).should('contain', '1');
+      // cy.get('blogs').eq(1).should('contain', '0');
     });
   });
 });
