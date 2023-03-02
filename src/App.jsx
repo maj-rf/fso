@@ -137,15 +137,17 @@ function App() {
             <CreateBlog handleCreateBlog={handleCreateBlog} />
           </ToggleDiv>
           <h2>blogs</h2>
-          {sorted?.map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              user={user}
-              handleDeleteBlog={handleDeleteBlog}
-              handleBlogLikes={handleBlogLikes}
-            />
-          ))}
+          <div className="blog-wrap">
+            {sorted?.map((blog) => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                user={user}
+                handleDeleteBlog={handleDeleteBlog}
+                handleBlogLikes={handleBlogLikes}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>
