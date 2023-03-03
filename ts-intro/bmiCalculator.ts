@@ -5,5 +5,7 @@ function calculateBMI(height: number, weight: number) {
   else if (bmi > 18.5 && bmi < 24.9) return 'Normal (healthy weight)';
 }
 
-console.log(calculateBMI(180, 74));
-console.log(calculateBMI(180, 50));
+const height: number = Number(process.argv[2]);
+const weight: number = Number(process.argv[3]);
+
+console.log(calculateBMI(height, weight));
