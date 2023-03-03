@@ -8,7 +8,7 @@ interface Result {
   average: number;
 }
 
-function calculateExercise(arr: number[], target: number = 2): Result {
+function calculateExercise(arr: number[], target = 2): Result {
   const periodLength = arr.length;
   const trainingDays = arr.filter((num) => (num > 0 ? true : false)).length;
   const average =

@@ -5,7 +5,7 @@ export function calculateBMI(height: number, weight: number) {
   else return 'Normal (healthy weight)';
 }
 
-const height: number = Number(process.argv[2]);
-const weight: number = Number(process.argv[3]);
+const height = Number(process.argv[2]);
+const weight = Number(process.argv[3]);
 
 console.log(calculateBMI(height, weight));

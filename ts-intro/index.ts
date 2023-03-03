@@ -8,11 +8,9 @@ app.get('/hello', (_req, res) => {
 
 app.get('/bmi', (req, res) => {
   if (!req.query.height || !req.query.weight) {
-    res
-      .status(400)
-      .json({
-        error: 'Invalid Parameters: Please provide both height and weight',
-      });
+    res.status(400).json({
+      error: 'Invalid Parameters: Please provide both height and weight',
+    });
   }
   if (isNaN(Number(req.query.height)) || isNaN(Number(req.query.weight))) {
     res.status(400).json({
