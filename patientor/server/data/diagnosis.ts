@@ -1,6 +1,6 @@
 import { Diagnose } from '../src/types';
 
-const data: Diagnose[] = [
+export const data: Diagnose[] = [
   {
     code: 'M24.2',
     name: 'Disorder of ligament',
@@ -77,5 +77,3 @@ const data: Diagnose[] = [
     latin: 'Alia retinopathia proliferativa',
   },
 ];
-
-export default data;
