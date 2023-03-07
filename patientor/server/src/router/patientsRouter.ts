@@ -1,7 +1,7 @@
 import express from 'express';
 import { getPatients } from '../services/patientsServices';
 import { addNewPatient } from '../services/patientsServices';
-import { NewPatient } from '../types';
+import { toNewPatientEntry } from '../utils/toNewPatientEntry';
 const patientsRouter = express.Router();
 
 patientsRouter.get('/', (_req, res) => {
@@ -10,15 +10,17 @@ patientsRouter.get('/', (_req, res) => {
 });
 
 patientsRouter.post('/', (req, res) => {
-  const { name, ssn, dateOfBirth, occupation, gender } = req.body as NewPatient;
-  const addedPatient = addNewPatient({
-    name,
-    ssn,
-    dateOfBirth,
-    occupation,
-    gender,
-  });
-  res.json(addedPatient);
+  try {
+    const newPatientEntry = toNewPatientEntry(req.body);
+    const addedPatient = addNewPatient(newPatientEntry);
+    res.json(addedPatient);
+  } catch (error: unknown) {
+    let errorMessage = 'Something went wrong.';
+    if (error instanceof Error) {
+      errorMessage += ' Error: ' + error.message;
+    }
+    res.status(400).send(errorMessage);
+  }
 });
 
 export default patientsRouter;
