@@ -19,6 +19,15 @@ export const Part = ({ course }: { course: Course }) => {
       );
     case 'group':
       return <div>project exercises {course.groupProjectCount}</div>;
+    case 'special':
+      return (
+        <div>
+          <p>{course.description}</p>
+          {course.requirements.map((req) => (
+            <div key={req}>{req}</div>
+          ))}
+        </div>
+      );
     default:
       return assertNever(course);
   }
