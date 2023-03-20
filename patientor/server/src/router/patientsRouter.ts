@@ -1,11 +1,14 @@
 import express from 'express';
-import { getPatients } from '../services/patientsServices';
+import {
+  getPatients,
+  getNonSensitivePatientsData,
+} from '../services/patientsServices';
 import { addNewPatient } from '../services/patientsServices';
 import { toNewPatientEntry } from '../utils/toNewPatientEntry';
 const patientsRouter = express.Router();
 
 patientsRouter.get('/', (_req, res) => {
-  const data = getPatients();
+  const data = getNonSensitivePatientsData();
   res.json(data);
 });
 
@@ -21,6 +24,13 @@ patientsRouter.post('/', (req, res) => {
     }
     res.status(400).send(errorMessage);
   }
+});
+
+patientsRouter.get('/:id', (req, res) => {
+  const id = req.params.id;
+  const data = getPatients();
+  const patient = data.find((x) => x.id === id);
+  res.json(patient);
 });
 
 export default patientsRouter;
