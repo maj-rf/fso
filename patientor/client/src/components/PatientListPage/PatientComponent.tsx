@@ -1,15 +1,9 @@
-import {
-  Card,
-  CardHeader,
-  List,
-  ListItem,
-  CardContent,
-  Typography,
-} from '@mui/material';
+import { Typography, Container, Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getPatient } from '../../services/patients';
 import { Diagnose, Patient } from '../../types';
+import { EntryDetails } from '../EntryDetails/EntryDetails';
 
 export const PatientComponent = ({ diagnosis }: { diagnosis: Diagnose[] }) => {
   const [patient, setPatient] = useState<Patient | null>(null);
@@ -25,9 +19,9 @@ export const PatientComponent = ({ diagnosis }: { diagnosis: Diagnose[] }) => {
     void fetchPatient();
   }, [id]);
   return (
-    <Card sx={{ maxWidth: 'max-content' }}>
-      <CardHeader title={patient?.name} />
-      <CardContent>
+    <Container maxWidth="sm">
+      <Box sx={{ bgcolor: '#cfe8fc', p: 2 }}>
+        <Typography variant="h4">{patient?.name}</Typography>
         <Typography variant="body1" component="div">
           Occupation: {patient?.occupation}
         </Typography>
@@ -37,20 +31,10 @@ export const PatientComponent = ({ diagnosis }: { diagnosis: Diagnose[] }) => {
         <Typography variant="h6">Entries</Typography>
         {patient?.entries.map((entry) => {
           return (
-            <List key={entry.id}>
-              <ListItem>{entry.date}</ListItem>
-              <ListItem>{entry.description}</ListItem>
-              <ul>
-                {entry.diagnosisCodes?.map((code) => (
-                  <li key={code}>
-                    {code}: {diagnosis.find((d) => d.code === code)?.name}
-                  </li>
-                ))}
-              </ul>
-            </List>
+            <EntryDetails key={entry.id} entry={entry} diagnosis={diagnosis} />
           );
         })}
-      </CardContent>
-    </Card>
+      </Box>
+    </Container>
   );
 };
