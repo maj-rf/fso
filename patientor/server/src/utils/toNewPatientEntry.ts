@@ -5,6 +5,7 @@ import {
   Entry,
   EntryTypes,
   EntryWithoutId,
+  Diagnose,
 } from '../types';
 
 type SickLeave = {
@@ -35,9 +36,9 @@ function isGender(param: string): param is Gender {
 //   return typeof arg === 'undefined' || arg === null;
 // };
 
-const isArray = (arg: unknown): arg is unknown[] => {
-  return Array.isArray(arg);
-};
+// const isArray = (arg: unknown): arg is unknown[] => {
+//   return Array.isArray(arg);
+// };
 
 const isObject = (arg: unknown): arg is object => {
   return typeof arg === 'object' && arg !== null;
@@ -143,11 +144,12 @@ const parseGender = (gender: unknown): Gender => {
 //   return s;
 // };
 
-const parseDiagnosisCodes = (arg: unknown): Entry['diagnosisCodes'] => {
-  if (!isArray(arg) || !arg.every((code): code is string => isString(code)))
-    throw new Error('Diagnosis codes must be an array of strings.');
-
-  return arg;
+const parseDiagnosisCodes = (object: unknown): Array<Diagnose['code']> => {
+  if (!object || typeof object !== 'object' || !('diagnosisCodes' in object)) {
+    // we will just trust the data to be in correct form
+    return [] as Array<Diagnose['code']>;
+  }
+  return object.diagnosisCodes as Array<Diagnose['code']>;
 };
 
 const parseSickLeave = (arg: unknown): SickLeave => {
@@ -206,7 +208,7 @@ export const toNewEntry = (object: unknown): EntryWithoutId => {
     description: parseString(object.description, 'description'),
     date: parseDate(object.date),
     specialist: parseString(object.specialist, 'specialist'),
-    diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes) || undefined,
+    diagnosisCodes: parseDiagnosisCodes(object),
   };
   switch (object.type) {
     case 'HealthCheck':
