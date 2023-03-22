@@ -1,4 +1,4 @@
-import { useState, SyntheticEvent } from 'react';
+import { useState, useEffect, SyntheticEvent } from 'react';
 
 import {
   TextField,
@@ -112,7 +112,6 @@ export const AddEntryForm = ({ onCancel, onSubmit, diagnosis }: Props) => {
     const {
       target: { value },
     } = event;
-    console.log(diagnosisCodes);
     setDiagnosisCode(typeof value === 'string' ? value.split(',') : value);
   };
 
@@ -163,6 +162,8 @@ export const AddEntryForm = ({ onCancel, onSubmit, diagnosis }: Props) => {
               fullWidth
               value={ddate}
               onChange={({ target }) => setDDate(target.value)}
+              type="date"
+              InputLabelProps={{ shrink: true }}
             />
             <TextField
               label="Discharge Criteria"
@@ -186,12 +187,16 @@ export const AddEntryForm = ({ onCancel, onSubmit, diagnosis }: Props) => {
               fullWidth
               value={startDate}
               onChange={({ target }) => setStartDate(target.value)}
+              type="date"
+              InputLabelProps={{ shrink: true }}
             />
             <TextField
               label="End Date"
               fullWidth
               value={endDate}
               onChange={({ target }) => setEndDate(target.value)}
+              type="date"
+              InputLabelProps={{ shrink: true }}
             />
           </div>
         );
@@ -234,6 +239,9 @@ export const AddEntryForm = ({ onCancel, onSubmit, diagnosis }: Props) => {
           fullWidth
           value={date}
           onChange={({ target }) => setDate(target.value)}
+          placeholder="YYYY-MM-DD"
+          type="date"
+          InputLabelProps={{ shrink: true }}
         />
         <TextField
           label="Description"
