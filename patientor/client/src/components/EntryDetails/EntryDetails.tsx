@@ -11,10 +11,10 @@ export const EntryDetails = ({
 }) => {
   switch (entry.type) {
     case 'Hospital':
-      return <Hospital entry={entry} />;
+      return <Hospital entry={entry} diagnosis={diagnosis} />;
     case 'OccupationalHealthcare':
       return <OccupationalHealthcare entry={entry} diagnosis={diagnosis} />;
     case 'HealthCheck':
-      return <HealthCheck entry={entry} />;
+      return <HealthCheck entry={entry} diagnosis={diagnosis} />;
   }
 };
