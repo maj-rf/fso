@@ -1,3 +1,17 @@
+export const voteThis = (id) => {
+  return {
+    type: 'VOTE',
+    payload: { id },
+  };
+};
+
+export const createThis = (content) => {
+  return {
+    type: 'CREATE',
+    payload: { content },
+  };
+};
+
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
