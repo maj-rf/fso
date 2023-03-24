@@ -9,10 +9,10 @@ export const AnecdoteList = () => {
     else return state.anecdotes.filter((a) => a.content.includes(state.filter));
   });
   const dispatch = useDispatch();
-  const sorted = anecdotes.sort((a, b) => b.votes - a.votes);
+  const sorted = [...anecdotes].sort((a, b) => b.votes - a.votes);
 
   const vote = (id) => {
-    dispatch(voteThis(id));
+    dispatch(voteThis(id.toString()));
   };
 
   const filterAnecdotes = (str) => {
