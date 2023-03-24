@@ -1,6 +1,11 @@
-export const Filter = ({ filterAnecdotes }) => {
+import { useDispatch } from 'react-redux';
+import { filterChange } from '../reducers/filterReducer';
+
+export const Filter = () => {
+  const dispatch = useDispatch();
+
   const handleChange = (e) => {
-    filterAnecdotes(e.target.value);
+    dispatch(filterChange(e.target.value));
   };
 
   const style = {
