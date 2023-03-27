@@ -12,3 +12,8 @@ export const createNew = async (content) => {
   const res = await axios.post(baseUrl, obj);
   return res.data;
 };
+
+export const updateAnecdote = async (id, update) => {
+  const res = await axios.put(`${baseUrl}/${id}`, update);
+  return res.data;
+};
