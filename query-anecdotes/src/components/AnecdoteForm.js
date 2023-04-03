@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from 'react-query';
+import { useNotifDispatch } from '../NotifContext';
 import { createAnecdote } from '../requests';
 
 const AnecdoteForm = () => {
@@ -11,11 +12,20 @@ const AnecdoteForm = () => {
     },
   });
 
+  const notifDispatch = useNotifDispatch();
+
   const onCreate = (event) => {
     event.preventDefault();
     const content = event.target.anecdote.value;
     event.target.anecdote.value = '';
     newAnecdoteMutation.mutate({ content, votes: 0 });
+    notifDispatch({
+      type: 'show',
+      payload: { notif: `Created "${content}"` },
+    });
+    setTimeout(() => {
+      notifDispatch({ type: 'hide' });
+    }, 5000);
   };
 
   return (
