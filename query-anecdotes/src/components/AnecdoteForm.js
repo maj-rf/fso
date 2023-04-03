@@ -4,15 +4,25 @@ import { createAnecdote } from '../requests';
 
 const AnecdoteForm = () => {
   const queryClient = useQueryClient();
+  const notifDispatch = useNotifDispatch();
   const newAnecdoteMutation = useMutation(createAnecdote, {
     refetchOnWindowFocus: false,
     onSuccess: (newAnecdote) => {
       const anecdotes = queryClient.getQueryData('anecdotes');
       queryClient.setQueryData('anecdotes', anecdotes.concat(newAnecdote));
     },
+    onError: () => {
+      notifDispatch({
+        type: 'show',
+        payload: {
+          notif: 'content is too short. must be at least 5 characters ',
+        },
+      });
+      setTimeout(() => {
+        notifDispatch({ type: 'hide' });
+      }, 5000);
+    },
   });
-
-  const notifDispatch = useNotifDispatch();
 
   const onCreate = (event) => {
     event.preventDefault();
