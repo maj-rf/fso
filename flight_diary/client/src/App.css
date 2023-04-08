@@ -1,0 +1,42 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.App {
+  text-align: center;
+  position: relative;
+}
+
+.notif {
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 1rem;
+  width: 50vw;
+  max-width: 300px;
+  background-color: aliceblue;
+  border: 2px solid tomato;
+}
+
+form {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+form > div {
+  display: grid;
+}
+
+@media (min-width: 35em) {
+  form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  form > button {
+    grid-column: -3/-1;
+  }
+}
