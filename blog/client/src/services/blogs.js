@@ -26,8 +26,8 @@ export const deleteBlog = async (id) => {
   return response.data;
 };
 
-export const updateBlog = async (id, newObj) => {
+export const updateBlog = async (update) => {
   const config = { headers: { Authorization: token } };
-  const response = await axios.put(`${baseUrl}/${id}`, newObj, config);
+  const response = await axios.put(`${baseUrl}/${update.id}`, update, config);
   return response.data;
 };
