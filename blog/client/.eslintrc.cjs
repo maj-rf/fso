@@ -10,6 +10,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:cypress/recommended',
+    'prettier',
   ],
   overrides: [],
   parserOptions: {

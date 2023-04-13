@@ -40,7 +40,7 @@ describe('Blog Page', () => {
         user={mockUser}
         handleBlogLikes={mockLiker}
         handleDeleteBlog={mockDelete}
-      />
+      />,
     );
     const title = screen.getByText('Noli Me Tangere');
     const author = screen.getByText('Dr. Jose Rizal');
@@ -54,7 +54,7 @@ describe('Blog Page', () => {
         user={mockUser}
         handleBlogLikes={mockLiker}
         handleDeleteBlog={mockDelete}
-      />
+      />,
     );
     const user = userEvent.setup();
     const button = screen.getByText('View');
@@ -71,7 +71,7 @@ describe('Blog Page', () => {
         user={mockUser}
         handleBlogLikes={mockLiker}
         handleDeleteBlog={mockDelete}
-      />
+      />,
     );
     const user = userEvent.setup();
     const button = screen.getByText('View');

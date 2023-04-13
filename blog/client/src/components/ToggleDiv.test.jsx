@@ -11,7 +11,7 @@ describe('Toggleable Div', () => {
     container = render(
       <ToggleDiv label="View">
         <div className="testDiv">togglable content</div>
-      </ToggleDiv>
+      </ToggleDiv>,
     ).container;
   });
 
