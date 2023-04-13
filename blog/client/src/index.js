@@ -4,12 +4,15 @@ import App from './App';
 import './index.css';
 import { NotifContextProvider } from './context/NotificationContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { UserProvider } from './context/UserContext';
 
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById('root')).render(
   <QueryClientProvider client={queryClient}>
-    <NotifContextProvider>
-      <App />
-    </NotifContextProvider>
+    <UserProvider>
+      <NotifContextProvider>
+        <App />
+      </NotifContextProvider>
+    </UserProvider>
   </QueryClientProvider>,
 );

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { Blog } from './components/Blog';
 import { getAll, setToken } from './services/blogs';
 import { login } from './services/auth';
@@ -9,11 +9,12 @@ import { CreateBlog } from './components/CreateBlog';
 import ToggleDiv from './components/ToggleDiv';
 import { useNotifDispatch } from './context/NotificationContext';
 import { useQuery } from 'react-query';
+import { UserContext } from './context/UserContext';
 
 function App() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState(null);
+  const [user, userDispatch] = useContext(UserContext);
   const notifDispatch = useNotifDispatch();
   const blogFormRef = useRef();
   const results = useQuery(['blogs'], getAll);
@@ -23,7 +24,7 @@ function App() {
     const blogUser = window.localStorage.getItem('blogUser');
     if (blogUser) {
       const userObj = JSON.parse(blogUser);
-      setUser(userObj);
+      userDispatch({ type: 'SET', payload: userObj });
       setToken(userObj.token);
     }
   }, []);
@@ -41,11 +42,13 @@ function App() {
     try {
       const user = await login({ username, password });
       window.localStorage.setItem('blogUser', JSON.stringify(user));
-      setToken(user.token);
-      setUser(user);
-      setUsername('');
-      setPassword('');
-      setNotification({ notif: 'Logged In!', notifType: 'success' });
+      if (user) {
+        userDispatch({ type: 'SET', payload: user });
+        setToken(user.token);
+        setUsername('');
+        setPassword('');
+        setNotification({ notif: 'Logged In!', notifType: 'success' });
+      }
     } catch (err) {
       setNotification({ notif: err.response.data.error, notifType: 'error' });
     }
@@ -58,7 +61,7 @@ function App() {
 
   const handleLogout = () => {
     window.localStorage.removeItem('blogUser');
-    setUser(null);
+    userDispatch({ type: 'RESET' });
     setNotification({ notif: 'Logged Out!', notifType: 'success' });
     return;
   };

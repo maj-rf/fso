@@ -33,9 +33,10 @@ module.exports = {
     ],
     'linebreak-style': ['error', 'unix'],
     quotes: ['error', 'single'],
-    semi: ['error', 'always'],
+    semi: ['warn', 'always'],
     'react/prop-types': ['off'],
     'no-console': 0,
+    'no-unused-vars': 'warn',
   },
   settings: {
     react: {
