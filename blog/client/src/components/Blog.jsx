@@ -1,6 +1,8 @@
+import { useMutation, useQueryClient } from 'react-query';
 import ToggleDiv from './ToggleDiv';
 import PropTypes from 'prop-types';
-export const Blog = ({ blog, user, handleDeleteBlog, handleBlogLikes }) => {
+import { deleteBlog, updateBlog } from '../services/blogs';
+export const Blog = ({ blog, user, setNotification }) => {
   const { id, title, author, url, likes } = blog;
   const blogStyle = {
     paddingTop: 10,
@@ -9,23 +11,39 @@ export const Blog = ({ blog, user, handleDeleteBlog, handleBlogLikes }) => {
     borderWidth: 1,
     marginBottom: 5,
   };
+  const queryClient = useQueryClient();
+
+  const deleteBlogMutation = useMutation(deleteBlog, {
+    // onSuccess: (id) => {
+    //   const blogs = queryClient.getQueryData(['blogs']);
+    //   const filtered = blogs.filter((blog) => blog.id !== id);
+    //   queryClient.setQueryData(['blogs'], filtered);
+    // },
+    onSuccess: () => queryClient.invalidateQueries(['blogs']),
+  });
+
+  const updateBlogMutation = useMutation(updateBlog, {
+    onSuccess: () => queryClient.invalidateQueries(['blogs']),
+  });
 
   const handleDeleteClick = () => {
     if (confirm(`Do you want to delete ${title}?`)) {
-      handleDeleteBlog(id);
+      deleteBlogMutation.mutate(id);
+      setNotification({
+        notif: 'Successfully deleted',
+        notifType: 'success',
+      });
     }
   };
 
   const handleLikeClick = () => {
-    const newObj = {
-      title,
-      author,
-      url,
-      likes: likes + 1,
-    };
-
-    handleBlogLikes(id, newObj);
+    updateBlogMutation.mutate({ ...blog, likes: blog.likes + 1 });
+    setNotification({
+      notif: `You liked ${blog.title} by ${author}`,
+      notifType: 'success',
+    });
   };
+
   return (
     <div style={blogStyle} className="blogs">
       <p>{title}</p>
@@ -46,6 +64,5 @@ export const Blog = ({ blog, user, handleDeleteBlog, handleBlogLikes }) => {
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
-  handleDeleteBlog: PropTypes.func.isRequired,
-  handleBlogLikes: PropTypes.func.isRequired,
+  setNotification: PropTypes.func.isRequired,
 };

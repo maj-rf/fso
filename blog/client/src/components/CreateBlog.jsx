@@ -11,8 +11,8 @@ export const CreateBlog = ({ setNotification }) => {
   const createBlogMutation = useMutation(createBlog, {
     refetchOnWindowFocus: false,
     onSuccess: (newBlog) => {
-      const allBlogs = queryClient.getQueryData('blogs');
-      queryClient.setQueryData('blogs', allBlogs.concat(newBlog));
+      const allBlogs = queryClient.getQueryData(['blogs']);
+      queryClient.setQueryData(['blogs'], allBlogs.concat(newBlog));
     },
     onError: (err) => {
       setNotification({

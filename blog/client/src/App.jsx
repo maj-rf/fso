@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Blog } from './components/Blog';
-import { getAll, setToken, deleteBlog, updateBlog } from './services/blogs';
+import { getAll, setToken } from './services/blogs';
 import { login } from './services/auth';
 import './App.css';
 import { Login } from './components/Login';
@@ -11,13 +11,13 @@ import { useNotifDispatch } from './context/NotificationContext';
 import { useQuery } from 'react-query';
 
 function App() {
-  const results = useQuery('blogs', getAll);
-  const blogs = results.data;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const notifDispatch = useNotifDispatch();
   const blogFormRef = useRef();
+  const results = useQuery(['blogs'], getAll);
+  const blogs = results.data;
 
   useEffect(() => {
     const blogUser = window.localStorage.getItem('blogUser');
@@ -63,36 +63,6 @@ function App() {
     return;
   };
 
-  const handleDeleteBlog = async (id) => {
-    try {
-      await deleteBlog(id);
-      //const newBlogs = blogs.filter((blog) => blog.id !== id);
-      //setBlogs(newBlogs);
-      setNotification({
-        notif: 'Successfully deleted',
-        notifType: 'success',
-      });
-    } catch (err) {
-      setNotification({ notif: err.response.data.error, notifType: 'error' });
-    }
-  };
-
-  const handleBlogLikes = async (id, newObj) => {
-    try {
-      await updateBlog(id, newObj);
-      // const newBlogs = blogs.map((obj) => {
-      //   return obj.id === id ? { ...obj, likes: obj.likes + 1 } : obj;
-      // });
-      //setBlogs(newBlogs);
-      setNotification({
-        notif: 'Succesfully Liked',
-        notifType: 'success',
-      });
-    } catch (err) {
-      setNotification({ notif: err.response.data.error, notifType: 'error' });
-    }
-  };
-
   return (
     <div className="home">
       <Notification />
@@ -121,8 +91,7 @@ function App() {
                   key={blog.id}
                   blog={blog}
                   user={user}
-                  handleDeleteBlog={handleDeleteBlog}
-                  handleBlogLikes={handleBlogLikes}
+                  setNotification={setNotification}
                 />
               ))}
           </div>
