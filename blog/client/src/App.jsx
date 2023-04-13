@@ -13,13 +13,14 @@ import { Login } from './components/Login';
 import { Notification } from './components/Notification';
 import { CreateBlog } from './components/CreateBlog';
 import ToggleDiv from './components/ToggleDiv';
+import { useNotifDispatch } from './context/NotificationContext';
 
 function App() {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  const [notifMessage, setNotifMessage] = useState({ text: null, type: '' });
+  const notifDispatch = useNotifDispatch();
   const blogFormRef = useRef();
   const sorted = blogs.sort((a, b) => b.likes - a.likes);
 
@@ -36,6 +37,14 @@ function App() {
     }
   }, []);
 
+  const setNotification = (payload) => {
+    notifDispatch({
+      type: 'show',
+      payload,
+    });
+    setTimeout(() => notifDispatch({ type: 'hide' }), 3000);
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -45,9 +54,9 @@ function App() {
       setUser(user);
       setUsername('');
       setPassword('');
-      showMessage({ text: 'Logged In!', type: 'success' });
+      setNotification({ notif: 'Logged In!', notifType: 'success' });
     } catch (err) {
-      showMessage({ text: err.response.data.error, type: 'error' });
+      setNotification({ notif: err.response.data.error, notifType: 'error' });
     }
   };
 
@@ -59,7 +68,7 @@ function App() {
   const handleLogout = () => {
     window.localStorage.removeItem('blogUser');
     setUser(null);
-    showMessage({ text: 'Logged Out!', type: 'success' });
+    setNotification({ notif: 'Logged Out!', notifType: 'success' });
     return;
   };
 
@@ -73,12 +82,12 @@ function App() {
     try {
       const response = await createBlog(newBlog);
       setBlogs(blogs.concat(response));
-      showMessage({
-        text: `Created new blog with title: ${newBlog.title}`,
-        type: 'success',
+      setNotification({
+        notif: `Created new blog with title: ${newBlog.title}`,
+        notifType: 'success',
       });
     } catch (err) {
-      showMessage({ text: err.response.data.error, type: 'error' });
+      setNotification({ notif: err.response.data.error, notifType: 'error' });
     }
   };
 
@@ -87,12 +96,12 @@ function App() {
       await deleteBlog(id);
       const newBlogs = blogs.filter((blog) => blog.id !== id);
       setBlogs(newBlogs);
-      showMessage({
-        text: 'Succesfully deleted',
-        type: 'success',
+      setNotification({
+        notif: 'Successfully deleted',
+        notifType: 'success',
       });
     } catch (err) {
-      showMessage({ text: err.response.data.error, type: 'error' });
+      setNotification({ notif: err.response.data.error, notifType: 'error' });
     }
   };
 
@@ -103,23 +112,18 @@ function App() {
         return obj.id === id ? { ...obj, likes: obj.likes + 1 } : obj;
       });
       setBlogs(newBlogs);
-      showMessage({
-        text: 'Succesfully Liked',
-        type: 'success',
+      setNotification({
+        notif: 'Succesfully Liked',
+        notifType: 'success',
       });
     } catch (err) {
-      showMessage({ text: err.response.data.error, type: 'error' });
+      setNotification({ notif: err.response.data.error, notifType: 'error' });
     }
-  };
-
-  const showMessage = (message) => {
-    setNotifMessage(message);
-    setTimeout(() => setNotifMessage({ text: null, type: '' }), 3000);
   };
 
   return (
     <div className="home">
-      <Notification message={notifMessage} />
+      <Notification />
       {user === null ? (
         <Login
           username={username}
