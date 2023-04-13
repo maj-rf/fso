@@ -1,10 +1,26 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useMutation, useQueryClient } from 'react-query';
+import { createBlog } from '../services/blogs';
 
-export const CreateBlog = ({ handleCreateBlog }) => {
+export const CreateBlog = ({ setNotification }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
+  const queryClient = useQueryClient();
+  const createBlogMutation = useMutation(createBlog, {
+    refetchOnWindowFocus: false,
+    onSuccess: (newBlog) => {
+      const allBlogs = queryClient.getQueryData('blogs');
+      queryClient.setQueryData('blogs', allBlogs.concat(newBlog));
+    },
+    onError: (err) => {
+      setNotification({
+        notif: err.response.data.error,
+        notifType: 'error',
+      });
+    },
+  });
 
   const handleBlogFormChange = (e) => {
     if (e.target.id === 'title') return setTitle(e.target.value);
@@ -14,7 +30,16 @@ export const CreateBlog = ({ handleCreateBlog }) => {
 
   const handleBlogSubmit = (e) => {
     e.preventDefault();
-    handleCreateBlog(title, author, url);
+    const newBlog = {
+      title,
+      author,
+      url,
+    };
+    createBlogMutation.mutate(newBlog);
+    setNotification({
+      notif: `Created new blog with title: ${newBlog.title}`,
+      notifType: 'success',
+    });
     setTitle('');
     setAuthor('');
     setUrl('');
@@ -58,5 +83,6 @@ export const CreateBlog = ({ handleCreateBlog }) => {
 };
 
 CreateBlog.propTypes = {
-  handleCreateBlog: PropTypes.func.isRequired,
+  //handleCreateBlog: PropTypes.func.isRequired,
+  setNotification: PropTypes.func.isRequired,
 };
