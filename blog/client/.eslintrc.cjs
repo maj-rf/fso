@@ -23,7 +23,14 @@ module.exports = {
   plugins: ['react', 'jest', 'cypress'],
   rules: {
     'react/react-in-jsx-scope': 'off',
-    indent: ['error', 2],
+    indent: [
+      'error',
+      2,
+      {
+        SwitchCase: 1,
+        ignoredNodes: ['ConditionalExpression'],
+      },
+    ],
     'linebreak-style': ['error', 'unix'],
     quotes: ['error', 'single'],
     semi: ['error', 'always'],
