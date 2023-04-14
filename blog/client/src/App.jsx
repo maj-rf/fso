@@ -1,25 +1,20 @@
-import { useState, useEffect, useRef, useContext } from 'react';
-import { Blog } from './components/Blog';
-import { getAll, setToken } from './services/blogs';
-import { login } from './services/auth';
 import './App.css';
-import { Login } from './components/Login';
-import { Notification } from './components/Notification';
-import { CreateBlog } from './components/CreateBlog';
-import ToggleDiv from './components/ToggleDiv';
-import { useNotifDispatch } from './context/NotificationContext';
-import { useQuery } from 'react-query';
+import { Routes, Route, useMatch } from 'react-router-dom';
+import { Home } from './pages/Home';
+import { Users } from './pages/Users';
+import { User } from './pages/User';
+import { Navbar } from './components/Navbar';
 import { UserContext } from './context/UserContext';
+import { useContext, useEffect } from 'react';
+import { setToken } from './services/blogs';
+import { useQuery } from 'react-query';
+import { getUsers } from './services/users';
 
 function App() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [user, userDispatch] = useContext(UserContext);
-  const notifDispatch = useNotifDispatch();
-  const blogFormRef = useRef();
-  const results = useQuery(['blogs'], getAll);
-  const blogs = results.data;
-
+  const result = useQuery(['users'], getUsers);
+  const match = useMatch('/users/:id');
+  //console.log(result.data);
   useEffect(() => {
     const blogUser = window.localStorage.getItem('blogUser');
     if (blogUser) {
@@ -29,78 +24,20 @@ function App() {
     }
   }, []);
 
-  const setNotification = (payload) => {
-    notifDispatch({
-      type: 'show',
-      payload,
-    });
-    setTimeout(() => notifDispatch({ type: 'hide' }), 3000);
-  };
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const user = await login({ username, password });
-      window.localStorage.setItem('blogUser', JSON.stringify(user));
-      if (user) {
-        userDispatch({ type: 'SET', payload: user });
-        setToken(user.token);
-        setUsername('');
-        setPassword('');
-        setNotification({ notif: 'Logged In!', notifType: 'success' });
-      }
-    } catch (err) {
-      setNotification({ notif: err.response.data.error, notifType: 'error' });
-    }
-  };
-
-  const handleChange = (e) => {
-    if (e.target.id === 'username') return setUsername(e.target.value);
-    else if (e.target.id === 'password') return setPassword(e.target.value);
-  };
-
-  const handleLogout = () => {
-    window.localStorage.removeItem('blogUser');
-    userDispatch({ type: 'RESET' });
-    setNotification({ notif: 'Logged Out!', notifType: 'success' });
-    return;
-  };
-
   return (
-    <div className="home">
-      <Notification />
-      {user === null ? (
-        <Login
-          username={username}
-          password={password}
-          handleLogin={handleLogin}
-          handleChange={handleChange}
+    <>
+      {user && <Navbar />}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/users" element={<Users />} />
+        <Route
+          path="/users/:id"
+          element={
+            <User user={result?.data?.find((a) => a.id === match?.params.id)} />
+          }
         />
-      ) : (
-        <div>
-          <p>
-            hello, {user.username}
-            <button onClick={handleLogout}>Logout</button>
-          </p>
-          <ToggleDiv label="Create Blog" ref={blogFormRef}>
-            <CreateBlog setNotification={setNotification} />
-          </ToggleDiv>
-          <h2>blogs</h2>
-          <div className="blog-wrap">
-            {blogs
-              ?.sort((a, b) => b.likes - a.likes)
-              .map((blog) => (
-                <Blog
-                  key={blog.id}
-                  blog={blog}
-                  user={user}
-                  setNotification={setNotification}
-                />
-              ))}
-          </div>
-        </div>
-      )}
-    </div>
+      </Routes>
+    </>
   );
 }
 

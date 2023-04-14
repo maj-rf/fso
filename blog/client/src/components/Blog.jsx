@@ -53,7 +53,7 @@ export const Blog = ({ blog, user, setNotification }) => {
           {likes} <button onClick={handleLikeClick}>like</button>
         </p>
         <p>{author}</p>
-        {user.username === blog.user.username ? (
+        {user?.username === blog.user.username ? (
           <button onClick={handleDeleteClick}>Delete</button>
         ) : null}
       </ToggleDiv>
