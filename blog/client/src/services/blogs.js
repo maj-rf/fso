@@ -31,3 +31,16 @@ export const updateBlog = async (update) => {
   const response = await axios.put(`${baseUrl}/${update.id}`, update, config);
   return response.data;
 };
+
+export const createComment = async (obj) => {
+  const url = `${baseUrl}/${obj.id}/comments`;
+  const response = await axios.post(url, obj);
+  console.log(obj);
+  return response.data;
+};
+
+export const getComments = async (blog) => {
+  const url = `${baseUrl}/${blog.id}/comments`;
+  const response = await axios.get(url);
+  return response.data;
+};
