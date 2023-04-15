@@ -1,5 +1,5 @@
 import './App.css';
-import { Routes, Route, useMatch } from 'react-router-dom';
+import { Routes, Route, useMatch, useNavigate } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { Users } from './pages/Users';
 import { User } from './pages/User';
@@ -14,15 +14,20 @@ import { Notification } from './components/Notification';
 import { useNotifDispatch } from './context/NotificationContext';
 function App() {
   const [user, userDispatch] = useContext(UserContext);
-  const result = useQuery(['users'], getUsers);
+  const usersResult = useQuery(['users'], getUsers);
   const blogResult = useQuery(['blogs'], getAll);
-  const match = useMatch('/users/:id');
+  const userMatch = useMatch('/users/:id');
   const blogMatch = useMatch('/blogs/:id');
-  const currentBlog = blogResult?.data?.find(
-    (a) => a.id === blogMatch?.params.id,
-  );
+  const currentUser = userMatch
+    ? usersResult?.data?.find((user) => user.id === userMatch.params.id)
+    : null;
+  const currentBlog = blogMatch
+    ? blogResult?.data?.find((a) => a.id === blogMatch?.params.id)
+    : null;
+
   const notifDispatch = useNotifDispatch();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const blogUser = window.localStorage.getItem('blogUser');
@@ -56,6 +61,7 @@ function App() {
         notif: 'Successfully deleted',
         notifType: 'success',
       });
+      navigate('/');
     }
   };
 
@@ -67,6 +73,8 @@ function App() {
     });
   };
 
+  if (blogResult.isLoading) return <div>Loading blogs...</div>;
+  if (blogResult.isError) return <div>Error: {blogResult.error}</div>;
   return (
     <>
       {user && <Navbar />}
@@ -74,12 +82,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/users" element={<Users />} />
-        <Route
-          path="/users/:id"
-          element={
-            <User user={result?.data?.find((a) => a.id === match?.params.id)} />
-          }
-        />
+        <Route path="/users/:id" element={<User user={currentUser} />} />
         <Route
           path="/blogs/:id"
           element={
