@@ -1,9 +1,11 @@
-import { useMutation, useQueryClient } from 'react-query';
 import ToggleDiv from './ToggleDiv';
 import PropTypes from 'prop-types';
-import { deleteBlog, updateBlog } from '../services/blogs';
-export const Blog = ({ blog, user, setNotification }) => {
-  const { id, title, author, url, likes } = blog;
+import { useUserValue } from '../context/UserContext';
+
+export const Blog = ({ blog, handleDelete, handleLike }) => {
+  if (!blog) return null;
+  const user = useUserValue();
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -11,50 +13,18 @@ export const Blog = ({ blog, user, setNotification }) => {
     borderWidth: 1,
     marginBottom: 5,
   };
-  const queryClient = useQueryClient();
-
-  const deleteBlogMutation = useMutation(deleteBlog, {
-    // onSuccess: (id) => {
-    //   const blogs = queryClient.getQueryData(['blogs']);
-    //   const filtered = blogs.filter((blog) => blog.id !== id);
-    //   queryClient.setQueryData(['blogs'], filtered);
-    // },
-    onSuccess: () => queryClient.invalidateQueries(['blogs']),
-  });
-
-  const updateBlogMutation = useMutation(updateBlog, {
-    onSuccess: () => queryClient.invalidateQueries(['blogs']),
-  });
-
-  const handleDeleteClick = () => {
-    if (confirm(`Do you want to delete ${title}?`)) {
-      deleteBlogMutation.mutate(id);
-      setNotification({
-        notif: 'Successfully deleted',
-        notifType: 'success',
-      });
-    }
-  };
-
-  const handleLikeClick = () => {
-    updateBlogMutation.mutate({ ...blog, likes: blog.likes + 1 });
-    setNotification({
-      notif: `You liked ${blog.title} by ${author}`,
-      notifType: 'success',
-    });
-  };
 
   return (
     <div style={blogStyle} className="blogs">
-      <p>{title}</p>
+      <p>{blog.title}</p>
       <ToggleDiv label="View">
-        <p>{url}</p>
+        <p>{blog.url}</p>
         <p>
-          {likes} <button onClick={handleLikeClick}>like</button>
+          {blog.likes} <button onClick={() => handleLike(blog)}>like</button>
         </p>
-        <p>{author}</p>
+        <p>{blog.author}</p>
         {user?.username === blog.user.username ? (
-          <button onClick={handleDeleteClick}>Delete</button>
+          <button onClick={() => handleDelete(blog)}>Delete</button>
         ) : null}
       </ToggleDiv>
     </div>
@@ -62,7 +32,6 @@ export const Blog = ({ blog, user, setNotification }) => {
 };
 
 Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
-  setNotification: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired,
+  handleLike: PropTypes.func.isRequired,
 };

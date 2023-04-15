@@ -27,10 +27,10 @@ export const Navbar = () => {
           <Link to="/users">Users</Link>
         </li>
       </ul>
-      <p>
-        hello, {user?.username}
+      <div className="log-info">
+        <p>hello, {user?.username}</p>
         <button onClick={handleLogout}>Logout</button>
-      </p>
+      </div>
     </nav>
   );
 };
