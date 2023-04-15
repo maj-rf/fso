@@ -2,6 +2,7 @@ const blogRouter = require('express').Router();
 const Blog = require('../models/blog');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
+const Comment = require('../models/comment');
 
 blogRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 });
@@ -26,6 +27,7 @@ blogRouter.post('/', async (request, response) => {
     url,
     likes: likes || 0,
     user: user, //user._id originally
+    comments: [],
   });
   const result = await blog.save();
   user.blogs = user.blogs.concat(result._id);
@@ -80,6 +82,29 @@ blogRouter.put('/:id', async (request, response) => {
     context: 'query',
   });
   response.status(202).end();
+});
+
+blogRouter.post('/:id/comments', async (request, response) => {
+  const id = request.params.id;
+  const { comment } = request.body;
+  if (!comment) {
+    return response.status(400).json({ error: 'Missing comment.' });
+  }
+  const blog = await Blog.findById(id);
+  const newComment = new Comment({
+    content: comment,
+  });
+  const saved = await newComment.save();
+  blog.comments = blog.comments.concat(saved._id);
+  await blog.save();
+  response.status(201).json(saved);
+});
+
+blogRouter.get('/:id/comments', async (request, response) => {
+  const blog = await Blog.findById(request.params.id);
+  const commentArray = blog.comments;
+  const comments = await Comment.find().where('_id').in(commentArray);
+  response.status(201).json(comments);
 });
 
 module.exports = blogRouter;
