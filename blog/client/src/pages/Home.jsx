@@ -1,14 +1,13 @@
-import { useState, useContext, useEffect, useRef } from 'react';
+import { useState, useContext, useRef } from 'react';
 import { UserContext } from '../context/UserContext';
 import { useNotifDispatch } from '../context/NotificationContext';
 import { useQuery } from 'react-query';
 import { getAll, setToken } from '../services/blogs';
 import { login } from '../services/auth';
-import { Notification } from '../components/Notification';
 import { Login } from '../components/Login';
 import ToggleDiv from '../components/ToggleDiv';
 import { CreateBlog } from '../components/CreateBlog';
-import { Blog } from '../components/Blog';
+import { Link } from 'react-router-dom';
 
 export const Home = () => {
   const [username, setUsername] = useState('');
@@ -18,15 +17,6 @@ export const Home = () => {
   const blogFormRef = useRef();
   const results = useQuery(['blogs'], getAll);
   const blogs = results.data;
-
-  // useEffect(() => {
-  //   const blogUser = window.localStorage.getItem('blogUser');
-  //   if (blogUser) {
-  //     const userObj = JSON.parse(blogUser);
-  //     userDispatch({ type: 'SET', payload: userObj });
-  //     setToken(userObj.token);
-  //   }
-  // }, []);
 
   const setNotification = (payload) => {
     notifDispatch({
@@ -46,7 +36,10 @@ export const Home = () => {
         setToken(user.token);
         setUsername('');
         setPassword('');
-        setNotification({ notif: 'Logged In!', notifType: 'success' });
+        setNotification({
+          notif: 'Logged In!',
+          notifType: 'success',
+        });
       }
     } catch (err) {
       setNotification({ notif: err.response.data.error, notifType: 'error' });
@@ -60,7 +53,6 @@ export const Home = () => {
 
   return (
     <div className="home">
-      <Notification />
       {user === null ? (
         <Login
           username={username}
@@ -78,12 +70,9 @@ export const Home = () => {
             {blogs
               ?.sort((a, b) => b.likes - a.likes)
               .map((blog) => (
-                <Blog
-                  key={blog.id}
-                  blog={blog}
-                  user={user}
-                  setNotification={setNotification}
-                />
+                <div key={blog.id}>
+                  <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                </div>
               ))}
           </div>
         </div>
