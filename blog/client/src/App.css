@@ -1,0 +1,153 @@
+.notif {
+  width: 200px;
+  max-width: 400px;
+  z-index: 2;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.success {
+  border: 2px solid #646cffaa;
+  background-color: aliceblue;
+  color: seagreen;
+}
+
+.error {
+  background-color: aliceblue;
+  border: 2px solid #646cffaa;
+  color: tomato;
+}
+
+/* #root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: grid;
+  place-items: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.notif {
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 1rem;
+  width: 50vw;
+  max-width: 300px;
+  z-index: 2;
+  border-radius: 16px;
+}
+.success {
+  border: 2px solid white;
+  background-color: seagreen;
+}
+
+.error {
+  border: 2px solid white;
+  background-color: tomato;
+}
+
+.home {
+  text-align: center;
+  width: 70%;
+  max-width: 600px;
+  margin: 0 auto;
+  border: 1px solid white;
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  align-items: center;
+  justify-content: space-around;
+}
+
+nav ul li {
+  border: 1px solid #646cffaa;
+  padding: 0.2rem 1rem;
+  border-radius: 16px;
+}
+
+.log-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.blogs {
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  gap: 2rem;
+  border: 2px solid #646cffaa;
+  border-radius: 1rem;
+}
+
+.blog-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.blog-comments {
+  display: grid;
+  place-items: center;
+}
+
+.comment-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.comment-form input {
+  padding: 0.2rem;
+  font-size: 1.2rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+} */
