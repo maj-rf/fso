@@ -1,5 +1,6 @@
 import { useState, forwardRef, useImperativeHandle } from 'react';
 import PropTypes from 'prop-types';
+import { Box, Button, Flex } from '@chakra-ui/react';
 
 const ToggleDiv = forwardRef(function (props, refs) {
   const [visible, setVisible] = useState(false);
@@ -18,15 +19,19 @@ const ToggleDiv = forwardRef(function (props, refs) {
   });
 
   return (
-    <div>
-      <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>{props.label}</button>
-      </div>
-      <div style={showWhenVisible} className="hidden-content">
+    <Flex justifyContent="center" alignItems="center">
+      <Box style={hideWhenVisible}>
+        <Button w="full" onClick={toggleVisibility} colorScheme="purple">
+          {props.label}
+        </Button>
+      </Box>
+      <Box style={showWhenVisible} className="hidden-content">
         {props.children}
-        <button onClick={toggleVisibility}>Close</button>
-      </div>
-    </div>
+        <Button w="full" onClick={toggleVisibility} colorScheme="purple">
+          Close
+        </Button>
+      </Box>
+    </Flex>
   );
 });
 

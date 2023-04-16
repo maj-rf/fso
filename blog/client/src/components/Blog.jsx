@@ -1,10 +1,21 @@
-import ToggleDiv from './ToggleDiv';
 import PropTypes from 'prop-types';
 import { useUserValue } from '../context/UserContext';
 import { CreateComment } from './CreateComment';
 import { Comments } from './Comments';
 import { useQueryClient, useMutation } from 'react-query';
 import { createComment } from '../services/blogs';
+import {
+  Flex,
+  Card,
+  CardHeader,
+  CardBody,
+  Stack,
+  Box,
+  Text,
+  Heading,
+  StackDivider,
+  Button,
+} from '@chakra-ui/react';
 export const Blog = ({ blog, handleDelete, handleLike }) => {
   const user = useUserValue();
 
@@ -23,25 +34,42 @@ export const Blog = ({ blog, handleDelete, handleLike }) => {
   };
 
   return (
-    <div className="blogs">
-      <h1>{blog.title}</h1>
-      <div className="blog-content">
-        <p>URL: {blog.url}</p>
-        <p>
-          Likes: {blog.likes}{' '}
-          <button onClick={() => handleLike(blog)}>like</button>
-        </p>
-        <p>Author: {blog.author}</p>
-        <p>Added by {blog.user.username}</p>
-        {user?.username === blog.user.username ? (
-          <button onClick={() => handleDelete(blog)}>Delete</button>
-        ) : null}
-      </div>
-      <div className="blog-comments">
-        <CreateComment handleSubmit={handleSubmit} />
-        <Comments blog={blog} />
-      </div>
-    </div>
+    <Flex direction="column" justifyContent="center" alignItems="center">
+      <Card mb={3} w="full" maxWidth={500}>
+        <CardHeader>
+          <Heading size="md">{blog.title}</Heading>
+        </CardHeader>
+        <CardBody>
+          <Stack divider={<StackDivider />} spacing={2}>
+            <Box>
+              <Heading size="xs">URL</Heading>
+              <Text>{blog.url}</Text>
+            </Box>
+            <Box>
+              <Heading size="xs">LIKES</Heading>
+              <Text>{blog.likes}</Text>
+              <Button w="100%" onClick={() => handleLike(blog)}>
+                like
+              </Button>
+            </Box>
+            <Box>
+              <Heading size="xs">AUTHOR</Heading>
+              <Text>{blog.author}</Text>
+            </Box>
+            <Box>
+              <Heading size="xs">ADDED BY</Heading>
+              <Text>{blog.user.username}</Text>
+            </Box>
+            {user?.username === blog.user.username ? (
+              <Button onClick={() => handleDelete(blog)}>Delete</Button>
+            ) : null}
+          </Stack>
+        </CardBody>
+      </Card>
+
+      <CreateComment handleSubmit={handleSubmit} />
+      <Comments blog={blog} />
+    </Flex>
   );
 };
 

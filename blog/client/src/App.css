@@ -1,4 +1,24 @@
-#root {
+.notif {
+  width: 200px;
+  max-width: 400px;
+  z-index: 2;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.success {
+  border: 2px solid #646cffaa;
+  background-color: aliceblue;
+  color: seagreen;
+}
+
+.error {
+  background-color: aliceblue;
+  border: 2px solid #646cffaa;
+  color: tomato;
+}
+
+/* #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
@@ -37,7 +57,6 @@
   max-width: 300px;
   z-index: 2;
   border-radius: 16px;
-  /* background-color: aliceblue; */
 }
 .success {
   border: 2px solid white;
@@ -131,4 +150,4 @@ nav ul li {
 
 .read-the-docs {
   color: #888;
-}
+} */

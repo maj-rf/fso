@@ -7,8 +7,18 @@ import { login } from '../services/auth';
 import { Login } from '../components/Login';
 import ToggleDiv from '../components/ToggleDiv';
 import { CreateBlog } from '../components/CreateBlog';
-import { Link } from 'react-router-dom';
-
+import { Link as RouteLink } from 'react-router-dom';
+import {
+  Flex,
+  Box,
+  Heading,
+  Link,
+  Card,
+  CardHeader,
+  CardBody,
+  Stack,
+  StackDivider,
+} from '@chakra-ui/react';
 export const Home = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -52,31 +62,49 @@ export const Home = () => {
   };
 
   return (
-    <div className="home">
-      {user === null ? (
-        <Login
-          username={username}
-          password={password}
-          handleLogin={handleLogin}
-          handleChange={handleChange}
-        />
-      ) : (
-        <div>
-          <ToggleDiv label="Create Blog" ref={blogFormRef}>
-            <CreateBlog setNotification={setNotification} />
-          </ToggleDiv>
-          <h2>blogs</h2>
-          <div className="blog-wrap">
-            {blogs
-              ?.sort((a, b) => b.likes - a.likes)
-              .map((blog) => (
-                <div key={blog.id}>
-                  <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-                </div>
-              ))}
-          </div>
-        </div>
-      )}
-    </div>
+    <Flex w="100%" align="center" justifyContent="center">
+      <Box>
+        {user === null ? (
+          <Login
+            username={username}
+            password={password}
+            handleLogin={handleLogin}
+            handleChange={handleChange}
+          />
+        ) : (
+          <Flex w="full" align="center" justifyContent="center">
+            <Box>
+              <ToggleDiv label="Create Blog" ref={blogFormRef}>
+                <CreateBlog setNotification={setNotification} />
+              </ToggleDiv>
+              <Card mt={3} w={500} maxWidth={700}>
+                <CardHeader>
+                  <Heading mt={2} align="center">
+                    Blogs
+                  </Heading>
+                </CardHeader>
+                <CardBody>
+                  <Stack divider={<StackDivider />} spacing={3}>
+                    {blogs
+                      ?.sort((a, b) => b.likes - a.likes)
+                      .map((blog) => (
+                        <Box key={blog.id}>
+                          <Link
+                            to={`/blogs/${blog.id}`}
+                            as={RouteLink}
+                            color="#2831d4aa"
+                          >
+                            {blog.title}
+                          </Link>
+                        </Box>
+                      ))}
+                  </Stack>
+                </CardBody>
+              </Card>
+            </Box>
+          </Flex>
+        )}
+      </Box>
+    </Flex>
   );
 };

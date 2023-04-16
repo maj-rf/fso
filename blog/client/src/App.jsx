@@ -12,6 +12,7 @@ import { getUsers } from './services/users';
 import { Blog } from './components/Blog';
 import { Notification } from './components/Notification';
 import { useNotifDispatch } from './context/NotificationContext';
+import { Box } from '@chakra-ui/react';
 function App() {
   const [user, userDispatch] = useContext(UserContext);
   const usersResult = useQuery(['users'], getUsers);
@@ -73,10 +74,10 @@ function App() {
     });
   };
 
-  if (blogResult.isLoading) return <div>Loading blogs...</div>;
+  if (blogResult.isLoading) return <div>Loading..</div>;
   if (blogResult.isError) return <div>Error: {blogResult.error}</div>;
   return (
-    <>
+    <Box position="relative">
       {user && <Navbar />}
       <Notification />
       <Routes>
@@ -94,7 +95,7 @@ function App() {
           }
         />
       </Routes>
-    </>
+    </Box>
   );
 }
 

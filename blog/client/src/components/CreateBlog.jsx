@@ -2,7 +2,15 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQueryClient } from 'react-query';
 import { createBlog } from '../services/blogs';
-
+import {
+  Flex,
+  Box,
+  Heading,
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+} from '@chakra-ui/react';
 export const CreateBlog = ({ setNotification }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
@@ -46,39 +54,48 @@ export const CreateBlog = ({ setNotification }) => {
   };
 
   return (
-    <form onSubmit={handleBlogSubmit}>
-      <div>
-        <label htmlFor="title">Title</label>
-        <input
-          onChange={handleBlogFormChange}
-          id="title"
-          type="text"
-          value={title}
-          placeholder="Harry Potter"
-        />
-      </div>
-      <div>
-        <label htmlFor="author">Author</label>
-        <input
-          onChange={handleBlogFormChange}
-          id="author"
-          type="text"
-          value={author}
-          placeholder="JK Rowling"
-        />
-      </div>
-      <div>
-        <label htmlFor="url">Url</label>
-        <input
-          onChange={handleBlogFormChange}
-          id="url"
-          type="text"
-          value={url}
-          placeholder="hogwar.ts"
-        />
-      </div>
-      <button type="submit">Submit</button>
-    </form>
+    <Flex width="full" align="center" justifyContent="center">
+      <Box py={2}>
+        <Box textAlign="center" mb={2}>
+          <Heading>Add an entry</Heading>
+        </Box>
+        <form onSubmit={handleBlogSubmit}>
+          <FormControl mb={4}>
+            <FormLabel htmlFor="title">Title</FormLabel>
+            <Input
+              onChange={handleBlogFormChange}
+              id="title"
+              type="text"
+              value={title}
+              placeholder="Harry Potter"
+            />
+          </FormControl>
+          <FormControl mb={4}>
+            <FormLabel htmlFor="author">Author</FormLabel>
+            <Input
+              onChange={handleBlogFormChange}
+              id="author"
+              type="text"
+              value={author}
+              placeholder="JK Rowling"
+            />
+          </FormControl>
+          <FormControl mb={4}>
+            <FormLabel htmlFor="url">Url</FormLabel>
+            <Input
+              onChange={handleBlogFormChange}
+              id="url"
+              type="text"
+              value={url}
+              placeholder="hogwar.ts"
+            />
+          </FormControl>
+          <Button mb={2} w="full" type="submit" colorScheme="green">
+            Submit
+          </Button>
+        </form>
+      </Box>
+    </Flex>
   );
 };
 
